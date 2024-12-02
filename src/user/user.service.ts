@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./entity/user.entity";
 import { Repository } from "typeorm";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDTO } from "./dto/update-user.dto";
 
 @Injectable()
 export class UserService {
@@ -53,6 +54,70 @@ export class UserService {
         }
     }
 
+    async disable(id : number) {
+        const user = await this.findById(id)
+
+        user.isActive = 0
+
+        await this.userRepository.save(user)
+
+        return {
+            status: "Usuário inativado com sucesso",
+            user: user
+        }
+    }
+
+    async activate(id : number) {
+        const user = await this.findById(id)
+
+        user.isActive = 1
+
+        await this.userRepository.save(user)
+
+        return {
+            status: "Usuário ativado com sucesso",
+            user: user
+        }
+    }
+
+    async updatePartial(id : number, body : UpdateUserDTO) {
+        const user = await this.findById(id)
+
+        if (body.email) {
+            const userEmail = await this.validateEmail(body.email)
+
+            if (userEmail){throw new BadRequestException('E-mail já existe no sistema')}
+        }
+
+       await this.userRepository.update(user.id, body)
+
+       const updateUser = await this.findById(id)
+
+        return {
+            status: "Usuário alterado com sucesso",
+            user: updateUser
+        }
+    }
+
+    async delete(id : number) {
+        const user = await this.findById(id)
+
+        await this.userRepository.delete(user)
+
+        return {
+            status: "Usuário deletado com sucesso"
+        }
+    }
+
+    async findById(id : number) {
+        const user = await this.userRepository.findOne({
+            where: {id}
+        })
+
+        if (!user) {throw new NotFoundException('Usuário não encontrado!')}
+
+        return user
+    }
 
     async validateEmail(email : string) {
 

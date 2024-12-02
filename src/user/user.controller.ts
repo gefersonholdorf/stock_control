@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Query, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { UserService } from "./user.service";
 import { PaginationPipe } from "src/pipes/pagination.pipe";
+import { UpdateUserDTO } from "./dto/update-user.dto";
 
 @Controller('users')
 export class UserController {
@@ -11,6 +12,11 @@ export class UserController {
     @Post()
     async create(@Body() body : CreateUserDTO) {
         return this.userService.create(body)
+    }
+
+    @Get(':id')
+    async findById(@Param('id', ParseIntPipe) id : number) {
+        return this.userService.findById(id)
     }
 
     @Get()
@@ -26,5 +32,25 @@ export class UserController {
         const {page, limit, order, direction} = paginationParams
 
         return this.userService.findAll(page, limit, order, direction)
+    }
+
+    @Patch(':id/disable')
+    async inactivate(@Param('id', ParseIntPipe) id : number) {
+        return this.userService.disable(id)
+    }
+
+    @Patch(':id/activate')
+    async activate(@Param('id', ParseIntPipe) id : number) {
+        return this.userService.activate(id)
+    }
+
+    @Patch(':id') 
+    async updatePartial(@Param('id', ParseIntPipe) id : number, @Body() body : UpdateUserDTO) {
+        return this.userService.updatePartial(id, body)
+    }
+
+    @Delete(':id')
+    async delete(@Param('id', ParseIntPipe) id : number) {
+        return this.userService.delete(id)
     }
 }
