@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UsePipes } from "@nestjs/common";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import { UserService } from "./user.service";
 import { PaginationPipe } from "src/pipes/pagination.pipe";
+import { UpdatePartialUserDTO } from "./dto/update-partial-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
+import { AuthGuard } from "src/guards/auth.guard";
 
 @Controller('users')
 export class UserController {
@@ -14,6 +16,7 @@ export class UserController {
         return this.userService.create(body)
     }
 
+    @UseGuards(AuthGuard)
     @Get(':id')
     async findById(@Param('id', ParseIntPipe) id : number) {
         return this.userService.findById(id)
@@ -45,8 +48,13 @@ export class UserController {
     }
 
     @Patch(':id') 
-    async updatePartial(@Param('id', ParseIntPipe) id : number, @Body() body : UpdateUserDTO) {
+    async updatePartial(@Param('id', ParseIntPipe) id : number, @Body() body : UpdatePartialUserDTO) {
         return this.userService.updatePartial(id, body)
+    }
+
+    @Put(':id')
+    async update(@Param('id', ParseIntPipe) id : number, @Body() body : UpdateUserDTO) {
+        return this.userService.update(id, body)
     }
 
     @Delete(':id')

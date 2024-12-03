@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "./entity/user.entity";
 import { Repository } from "typeorm";
 import { CreateUserDTO } from "./dto/create-user.dto";
 import * as bcrypt from 'bcrypt';
+import { UpdatePartialUserDTO } from "./dto/update-partial-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 
 @Injectable()
@@ -37,6 +38,8 @@ export class UserService {
 
     async findAll(page : number, limit : number, orderBy : string = 'name', orderDirection : string = 'ASC') {
 
+        console.log(orderBy, orderDirection)
+
         const [users, total] = await this.userRepository.findAndCount({
             skip: (page - 1) * limit,
             take: limit,
@@ -44,6 +47,10 @@ export class UserService {
                 [orderBy]: orderDirection
             }
         })
+
+        if (users.length <= 0) {
+            throw new BadRequestException('Não existe usuários nesta página!')
+        }
 
         return {
             users,
@@ -80,7 +87,7 @@ export class UserService {
         }
     }
 
-    async updatePartial(id : number, body : UpdateUserDTO) {
+    async updatePartial(id : number, body : UpdatePartialUserDTO) {
         const user = await this.findById(id)
 
         if (body.email) {
@@ -89,7 +96,16 @@ export class UserService {
             if (userEmail){throw new BadRequestException('E-mail já existe no sistema')}
         }
 
-       await this.userRepository.update(user.id, body)
+        let newPassword
+
+        if (body.password) {
+            newPassword = await bcrypt.hash(body.password, 10)
+        }
+
+       await this.userRepository.update(user.id, {
+        ...body,
+        password: newPassword
+       })
 
        const updateUser = await this.findById(id)
 
@@ -97,6 +113,34 @@ export class UserService {
             status: "Usuário alterado com sucesso",
             user: updateUser
         }
+    }
+
+    async update(id : number, body : UpdateUserDTO) {
+        const user = await this.findById(id)
+
+        if (user.email != body.email) {
+            const userEmail = await this.validateEmail(body.email)
+
+            if (userEmail) {throw new BadRequestException('Email já existente!')}        
+        }
+        let newPassword
+
+        if (body.password) {
+            newPassword = await bcrypt.hash(body.password, 10)
+        }
+
+        await this.userRepository.update(
+            id, {
+                ...body,
+                password: newPassword
+            })
+
+        const newUser = await this.findById(user.id)
+        
+        return {
+            status: "Usuário atualizado com sucesso!",
+            user: newUser
+        } 
     }
 
     async delete(id : number) {
@@ -130,5 +174,33 @@ export class UserService {
         }
 
         return user
+    }
+
+    async login(email : string, password : string) {
+        const user = await this.validateEmail(email)
+
+        if (!user) {
+            throw new BadRequestException('Email não existente!')
+        }
+        
+        const currentUser = await this.userRepository.findOne({
+            where: {
+               email 
+            },
+            select: {
+                password: true
+            }
+        })
+
+        if (user){
+            if(!await bcrypt.compare(password, currentUser.password)) {
+                throw new UnauthorizedException('Senha incorreta!')
+            }
+        }
+
+        return {
+            status: "Acesso liberado",
+            user
+        }
     }
 }
