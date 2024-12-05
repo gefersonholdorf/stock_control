@@ -5,7 +5,12 @@ import { PaginationPipe } from "src/pipes/pagination.pipe";
 import { UpdatePartialUserDTO } from "./dto/update-partial-user.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { AuthGuard } from "src/guards/auth.guard";
+import { Roles } from "src/decorators/role.decorator";
+import { Role } from "../enum/role.enum";
+import { RoleGuard } from "src/guards/role.guard";
 
+@Roles(Role.Admin, Role.User)
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
 export class UserController {
 
@@ -16,7 +21,6 @@ export class UserController {
         return this.userService.create(body)
     }
 
-    @UseGuards(AuthGuard)
     @Get(':id')
     async findById(@Param('id', ParseIntPipe) id : number) {
         return this.userService.findById(id)

@@ -183,11 +183,14 @@ export class UserService {
             throw new BadRequestException('Email não existente!')
         }
         
-        const currentUser = await this.userRepository.findOne({
+        const currentUser : UserEntity = await this.userRepository.findOne({
             where: {
                email 
             },
             select: {
+                id: true,
+                email: true,
+                role: true,
                 password: true
             }
         })
@@ -198,9 +201,6 @@ export class UserService {
             }
         }
 
-        return {
-            status: "Acesso liberado",
-            user
-        }
+        return currentUser
     }
 }

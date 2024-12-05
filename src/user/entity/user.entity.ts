@@ -32,6 +32,11 @@ export class UserEntity {
     })
     isActive : number
 
+    @Column({
+        default: 'user'
+    })
+    role : string
+
     @CreateDateColumn()
     createdAt : Date
 
