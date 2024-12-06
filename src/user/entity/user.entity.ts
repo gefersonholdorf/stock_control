@@ -37,6 +37,9 @@ export class UserEntity {
     })
     role : string
 
+    @Column()
+    photo : string
+
     @CreateDateColumn()
     createdAt : Date
 

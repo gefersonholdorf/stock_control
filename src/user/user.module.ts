@@ -7,9 +7,10 @@ import { AuthModule } from "src/auth/auth.module";
 import { Role } from "../enum/role.enum";
 import { Roles } from "src/decorators/role.decorator";
 import { RoleGuard } from "src/guards/role.guard";
+import { FileModule } from "src/file/file.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule)],
+    imports: [TypeOrmModule.forFeature([UserEntity]), forwardRef(() => AuthModule), FileModule],
     providers: [UserService],
     controllers: [UserController],
     exports: [UserService]

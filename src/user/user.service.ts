@@ -203,4 +203,10 @@ export class UserService {
 
         return currentUser
     }
+
+    async upload(id : number, path : string) {
+        return this.userRepository.update(id, {
+            photo: path
+        })
+    }
 }

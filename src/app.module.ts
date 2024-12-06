@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { RoleGuard } from './guards/role.guard';
 import { Reflector } from '@nestjs/core';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { Reflector } from '@nestjs/core';
       synchronize: process.env.NODE_ENV == 'development'
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    FileModule
   ],
   controllers: [AppController],
   providers: [AppService],
