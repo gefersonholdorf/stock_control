@@ -25,16 +25,16 @@ export class AuthService{
     async createToken(user : UserEntity) {
         return this.jwtService.sign(
             {
-                sub: user.id,      // ID do usuário
-                name: user.name,   // Nome do usuário
-                email: user.email, // Email do usuário
-                role: user.role    // Papel do usuário
+                sub: user.id,     
+                name: user.name,   
+                email: user.email, 
+                role: user.role    
             },
             {
-                secret: process.env.JWT_SECRET, // Chave secreta do JWT
-                issuer: 'api',                  // Quem emite o token
-                audience: 'users',              // Quem é o público do token
-                expiresIn: '1h'                 // Expiração do token
+                secret: process.env.JWT_SECRET, 
+                issuer: 'api',                  
+                audience: 'users',              
+                expiresIn: '1 days'                 
             }
         );
     }

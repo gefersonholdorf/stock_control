@@ -6,9 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user/entity/user.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { RoleGuard } from './guards/role.guard';
-import { Reflector } from '@nestjs/core';
 import { FileModule } from './file/file.module';
+import { ProductEntity } from './product/entity/product.entity';
+import { ProductModule } from './product/product.module';
+import { SupplierEntity } from './supplier/entity/supplier.entity';
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
   imports: [
@@ -25,12 +27,14 @@ import { FileModule } from './file/file.module';
       username: process.env.BD_USER,
       password: process.env.BD_PASSWORD,
       database: process.env.BD_DATABASE,
-      entities: [UserEntity],
+      entities: [UserEntity, ProductEntity, SupplierEntity],
       synchronize: process.env.NODE_ENV == 'development'
     }),
     UserModule,
     AuthModule,
-    FileModule
+    FileModule,
+    ProductModule,
+    SupplierModule
   ],
   controllers: [AppController],
   providers: [AppService],
