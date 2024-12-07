@@ -64,8 +64,8 @@ export class ProductService {
         const quantityProducts = product.stockQuantity
         console.log(quantityProducts)
 
-        if (quantityProducts - quantity < 1) {
-            throw new BadRequestException('Quantidade de produtos não pode ser menor que 1')
+        if (quantityProducts - quantity < 0) {
+            throw new BadRequestException('Quantidade de produtos não pode ser menor que 0')
         }
 
         product.stockQuantity -= quantity
