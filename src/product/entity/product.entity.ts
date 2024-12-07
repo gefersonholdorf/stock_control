@@ -1,5 +1,6 @@
+import { StockMovementEntity } from "src/stock-movement/entity/stock-movement.entity";
 import { SupplierEntity } from "src/supplier/entity/supplier.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('products')
 export class ProductEntity {
@@ -34,4 +35,7 @@ export class ProductEntity {
 
     @ManyToOne(type => SupplierEntity, supplier => supplier.products)
     supplier : SupplierEntity
+
+    @OneToMany(type => StockMovementEntity, (stockMovement) => stockMovement.product)
+    stockMovements: StockMovementEntity[]
 }

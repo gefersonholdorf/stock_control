@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductEntity } from "./entity/product.entity";
 import { Repository } from "typeorm";
@@ -35,6 +35,40 @@ export class ProductService {
         return this.productRepository.findBy({
             supplier
         })
+    }
+
+    async findById(id : number) {
+        const product = await this.productRepository.findOne({where: {id}})
+
+        if (!product) {
+            throw new NotFoundException('Produto não encontrado!')
+        }
+
+        return product
+    }
+
+    async entry(quantity : number, product : ProductEntity) {
+        const quantityProducts = product.stockQuantity
+        console.log(quantityProducts)
+
+        product.stockQuantity += quantity
+        console.log(product.stockQuantity)
+
+        await this.productRepository.save(product)
+    }
+
+    async exit(quantity : number, product : ProductEntity) {
+        const quantityProducts = product.stockQuantity
+        console.log(quantityProducts)
+
+        if (quantityProducts - quantity < 1) {
+            throw new BadRequestException('Quantidade de produtos não pode ser menor que 1')
+        }
+
+        product.stockQuantity -= quantity
+        console.log(product.stockQuantity)
+
+        await this.productRepository.save(product)
     }
 
 }

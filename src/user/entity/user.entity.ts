@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { StockMovementEntity } from "src/stock-movement/entity/stock-movement.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('users')
 export class UserEntity {
@@ -45,4 +46,7 @@ export class UserEntity {
 
     @UpdateDateColumn()
     updatedAt : Date
+
+    @OneToMany(type => StockMovementEntity, (stockMovement) => stockMovement.user)
+    stockMovement : StockMovementEntity[]
 }
