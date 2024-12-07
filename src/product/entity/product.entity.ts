@@ -1,3 +1,4 @@
+import { OrderEntity } from "src/order/entity/order.entity";
 import { StockMovementEntity } from "src/stock-movement/entity/stock-movement.entity";
 import { SupplierEntity } from "src/supplier/entity/supplier.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -38,4 +39,7 @@ export class ProductEntity {
 
     @OneToMany(type => StockMovementEntity, (stockMovement) => stockMovement.product)
     stockMovements: StockMovementEntity[]
+
+    @OneToMany(type => OrderEntity, (order) => order.product)
+    orders : OrderEntity[]
 }

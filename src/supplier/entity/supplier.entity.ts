@@ -1,3 +1,4 @@
+import { OrderEntity } from "src/order/entity/order.entity";
 import { ProductEntity } from "src/product/entity/product.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -27,4 +28,7 @@ export class SupplierEntity {
     
     @OneToMany(type => ProductEntity, product => product.supplier)
     products: ProductEntity[]
+
+    @OneToMany(type => OrderEntity, (order) => order.supplier)
+    orders: OrderEntity[]
 }

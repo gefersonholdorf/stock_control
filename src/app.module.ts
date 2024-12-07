@@ -13,6 +13,7 @@ import { SupplierEntity } from './supplier/entity/supplier.entity';
 import { SupplierModule } from './supplier/supplier.module';
 import { StockMovementEntity } from './stock-movement/entity/stock-movement.entity';
 import { StockMovementModule } from './stock-movement/stock-mevement.module';
+import { OrderEntity } from './order/entity/order.entity';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { StockMovementModule } from './stock-movement/stock-mevement.module';
       username: process.env.BD_USER,
       password: process.env.BD_PASSWORD,
       database: process.env.BD_DATABASE,
-      entities: [UserEntity, ProductEntity, SupplierEntity, StockMovementEntity],
+      entities: [UserEntity, ProductEntity, SupplierEntity, StockMovementEntity, OrderEntity],
       synchronize: process.env.NODE_ENV == 'development'
     }),
     UserModule,

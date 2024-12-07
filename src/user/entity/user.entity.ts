@@ -1,3 +1,4 @@
+import { OrderEntity } from "src/order/entity/order.entity";
 import { StockMovementEntity } from "src/stock-movement/entity/stock-movement.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -49,4 +50,7 @@ export class UserEntity {
 
     @OneToMany(type => StockMovementEntity, (stockMovement) => stockMovement.user)
     stockMovement : StockMovementEntity[]
+
+    @OneToMany(type => OrderEntity, (order) => order.user)
+    orders : OrderEntity[]
 }
