@@ -19,7 +19,7 @@ export class StockMovementService {
         const user = await this.userService.findById(createStockMovement.user)
         const product = await this.productService.findById(createStockMovement.product)
 
-        if (createStockMovement.type != "entry") {
+        if (createStockMovement.type != "entrada") {
             throw new BadRequestException('Tipo de movimentação não pode ser diferente de Entrada')
         }
 
@@ -43,7 +43,7 @@ export class StockMovementService {
         const user = await this.userService.findById(createStockMovement.user)
         const product = await this.productService.findById(createStockMovement.product)
 
-        if (createStockMovement.type != "exit") {
+        if (createStockMovement.type != "saida") {
             throw new BadRequestException('Tipo de movimentação não pode ser diferente de Saída')
         }
 
@@ -67,7 +67,6 @@ export class StockMovementService {
 
         const actualDate = new Date()
         const actualDateFormated = `${actualDate.getFullYear()}-${String(actualDate.getMonth()+1).padStart(2, '0')}-${String(actualDate.getDay()).padStart(2, '0')}`
-
         const startDateInit = new Date()
         startDateInit.setDate(startDateInit.getDay() - 30)
         const startDateFormated = `${startDateInit.getFullYear()}-${String(startDateInit.getMonth()+1).padStart(2, '0')}-${String(startDateInit.getDay()).padStart(2, '0')}`

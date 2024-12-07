@@ -1,4 +1,4 @@
 export enum TypeMovement {
-    Entry = "entry",
-    Exit = "exit"
+    Entrada = "entrada",
+    Saída = "saida"
 }

@@ -17,4 +17,9 @@ export class ProductController {
     async findById(@Param('id', ParseIntPipe) id : number) {
         return this.productService.findById(id)
     }
+
+    @Get()
+    async findAll() {
+        return this.productService.findAll()
+    }
 }

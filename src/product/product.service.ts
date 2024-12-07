@@ -5,6 +5,9 @@ import { Repository } from "typeorm";
 import { CreateProductDTO } from "./dto/create-product.dto";
 import { SupplierService } from "src/supplier/supplier.service";
 import { SupplierEntity } from "src/supplier/entity/supplier.entity";
+import { join } from "path";
+import * as fs from "fs";
+import { StatusProduct } from "src/enum/status-product.enum";
 
 @Injectable()
 export class ProductService {
@@ -69,6 +72,52 @@ export class ProductService {
         console.log(product.stockQuantity)
 
         await this.productRepository.save(product)
+    }
+
+    async findAll() {
+        const products = await this.productRepository.find()
+
+        const path = join(__dirname, '..', '..', 'config.json')
+        let config
+
+        try {
+            config = JSON.parse(fs.readFileSync(path, "utf-8"))
+        } catch (error) {
+            throw new BadRequestException('Erro ao acessar arquivo de configuração!')
+        }
+
+        const productsStatus : any = []
+
+        for (let product of products) {
+            const totalPrice = product.price * product.stockQuantity
+
+            if (product.stockQuantity == 0) {
+                productsStatus.push({
+                    ...product,
+                    status: StatusProduct.Indisponível,
+                    totalPrice
+                })
+            }
+
+            if (product.stockQuantity > 0 && product.stockQuantity <= config.limiteMinimoEstoque) {
+                productsStatus.push({
+                    ...product,
+                    status: StatusProduct.BaixoEstoque,
+                    totalPrice
+                 })
+            }
+
+            if (product.stockQuantity > config.limiteMinimoEstoque) {
+                productsStatus.push({
+                    ...product,
+                    status: StatusProduct.Disponível,
+                    totalPrice
+                 })
+            }
+        }
+        return {
+            productsStatus
+        }
     }
 
 }
